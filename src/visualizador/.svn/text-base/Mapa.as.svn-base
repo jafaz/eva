@@ -1,0 +1,105 @@
+package visualizador{
+	
+	import flash.events.Event;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import mx.collections.ArrayCollection;
+	import mx.controls.TextArea;
+	import mx.core.Container;
+	import mx.managers.PopUpManager;
+	
+	public class Mapa{
+		private var db:DBXML;
+		private var layers:Array;
+		private var generaURLWMS:WMSQuery;
+		private var w:int = 500;
+		private var h:int = 350;
+		private var bbox:BBOX;
+		
+		public function Mapa(db:DBXML, w:int, h:int){
+			this.db = db;
+			this.w = w;
+			this.h = h;
+			this.layers = db.capas;
+			this.bbox = db.bbox;
+			this.bbox.recalculaBBOX(w,h);
+			this.bbox.setOriginal();
+			this.generaURLWMS = new WMSQuery(db.urlservidor,this.w,this.h,4,this.bbox,10);
+		}
+		
+		public function daCapasWMS():Array{
+			return this.layers;
+		}
+		
+		public function daQUERY():WMSQuery{
+			return this.generaURLWMS;
+		}
+		
+		public function daUrlDD():String{	
+			var tmp:String = "";
+				for each ( capa in this.layers ){
+					var capa:WMSLayer = capa;
+					if ( capa.seleccionada ){
+					tmp = tmp + capa.nombre + ",";
+					}
+				}
+			tmp = tmp.substr(0,tmp.length-1);
+			tmp = "http://132.248.26.13:8080/7geos/wfs?request=GetFeature&version=1.1.0&typeName="+tmp+"&BBOX="+
+				this.bbox.toString(",")+"&outputFormat=SHAPE-ZIP";
+			return tmp;	
+		}
+		
+		public function pan(p1:Punto, p2:Punto):void{
+			this.bbox.traslada(p1, p2, this.w, this.h);
+			actualizaCapas();
+		}
+		
+		public function actualizaCapas():void{
+			var capa:WMSLayer;
+			for (var i:int; i < this.layers.length; i++){
+				capa = this.layers[i];
+				if (capa.seleccionada){
+					//trace(capa.title);
+					capa.pintaMapa(this.generaURLWMS);
+				}
+			}
+		}
+		
+		
+		public function zoom(tipo:int):void{
+			this.bbox.zoom(tipo);
+			actualizaCapas();
+		}
+		
+		public function reiniciaMapa():void{
+			this.bbox.restart();
+			actualizaCapas();
+		}
+		
+		public function regresaInfo(x:int, y:int, cont:Container):void{
+			var capa:WMSLayer;
+			var capas:Array = new Array();
+			for( var i:int; i < this.layers.length; i++){
+				capa = this.layers[i];
+				if ( capa.seleccionada ){
+					capas.push(this.layers[i]);
+				}
+			}
+			var loader:URLLoader = new URLLoader();
+			var url:String = this.generaURLWMS.creaURLInfoCapas(x,y,capas);
+			try{
+				loader.load(new URLRequest(url));
+			}catch (error:*){
+					trace("error");
+			}
+			loader.addEventListener(Event.COMPLETE, 
+					function(e:Event):void{
+						var inf:String = e.target.data;						
+						var win:infoMapa = PopUpManager.createPopUp(cont, infoMapa, true) as infoMapa;
+						var areaTexto:TextArea = win.getChildByName('txt') as TextArea;
+						areaTexto.text = inf;
+                		PopUpManager.centerPopUp(win);
+					} );
+		}
+	}
+}

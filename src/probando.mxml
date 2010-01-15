@@ -1,0 +1,516 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" creationComplete="init()" 
+	width="900" x="0" y="0" height="650" backgroundColor="#ffffff" backgroundGradientAlphas="[1.0, 1.0]" backgroundGradientColors="[#ffffff, #ffffff]">
+<mx:Script>
+	<![CDATA[
+		import mx.controls.CheckBox;
+		import mx.core.Container;
+		import mx.managers.CursorManager;
+		import mx.events.ScrollEvent;
+		import mx.controls.Alert;
+
+		import visualizador.Punto;
+		import visualizador.Mapa;
+		import mx.managers.DragManager;
+		import mx.core.DragSource;
+		import mx.events.DragEvent;
+		import visualizador.DBXML;
+		import visualizador.WMSLayer;
+		import mx.events.ListEvent;
+		import flash.system.Security; 
+
+		Security.loadPolicyFile("http://132.248.26.13:8080/crossdomain.xml");
+		//Security.loadPolicyFile("http://132.248.26.15:8080/crossdomain.xml");
+		
+				
+		private var mapa:Mapa;
+		public var capasTMP:Array;
+		public var arregloMetaSimbo:Array;
+		private var fileRef:FileReference;
+		private var urlReq:URLRequest; 
+
+		public function init():void{
+			//trace("chale no se que pex");
+			var cargador:URLLoader = new URLLoader();
+			var server:String = "http://132.248.26.13:8080/geoserver/ows?service=WMS&request=GetCapabilities";
+			//var server:String = "http://132.248.26.13:8080/pruebaGeos/wms?service=WMS&request=GetCapabilities";
+			try {
+				//cargador.load(new URLRequest("wms.xml"));
+				cargador.load(new URLRequest(server));
+			}catch (error:*){
+				trace("error");
+			}
+			cargador.addEventListener(Event.COMPLETE, cargaXML);
+			//cargador.addEventListener(HTTPStatusEvent.HTTP_STATUS, noCargo);
+			//cargador.addEventListener(IOErrorEvent.IO_ERROR, noCargo);
+			
+		}
+		
+		public function noCargo(event:Event):void{
+			try{ 
+				var a:Alert = new Alert();
+				Alert.show("Hay problemas de conexion con el servidor intente mas tarde :(");
+				this.mensaje.text = "Problemas de conexion";
+			}catch(error:*){
+				trace("no cargo");
+				
+			}
+		}
+		
+		public function cargaXML(event:Event):void{		
+			
+			try{
+				var db:DBXML = new DBXML(XML(event.target.data));
+				
+				mapa = new Mapa(db, this.cMapa.width, this.cMapa.height);
+				this.capasTMP = this.mapa.daCapasWMS();
+				//capa base al principio del arreglo
+				//this.capasTMP.sort(
+				
+				this.listaCapas.dataProvider = this.capasTMP;
+				this.imgMapas.dataProvider = copiaReversa(this.capasTMP);
+				this.arregloMetaSimbo = new Array(1);
+				this.arregloMetaSimbo[0] = {tipo:"", imagen:"img.png", texto:""};
+				this.removeChild(this.getChildByName("inicio"));
+				this.cMapa.doubleClickEnabled = true;
+				pintaEscala();
+				activaCapaBaseEdos();
+				//activaCapaBase();
+				
+				//agregaCapaBase();
+				
+				
+			}catch(error:Error){
+				this.mensaje.text = error.message;
+			}
+		}
+		
+		public function activaCapaBaseEdos():void{
+			var i:int =0;
+			trace("entre funcion");
+			while ( i < this.capasTMP.length ){
+				var capa:WMSLayer = this.capasTMP[i];
+				var nombre:String = capa.nombre;
+				if ( nombre == "unigeo:estados" ){
+					this.capasTMP[i].selecciona(this.mapa.daQUERY());
+					//this.capasTMP[i].seleccionada = true;
+					return
+				}
+				i++;
+			}
+		}
+		/*	
+		public function agregaCapaBase():void{
+			trace("hola");
+			if ( this.mapa.capaBase != null ){
+				trace("pon "+this.mapa.capaBase.seleccionada);
+				this.capaBase.selected = this.mapa.capaBase.seleccionada;
+			}else{
+				//trace("quita");
+				this.panelCapas.removeChild(this.capaBase);
+			}
+			var capa:WMSLayer;
+			var listaCapasTmp:Array = new Array();
+			for each ( capa in this.capasTMP ){
+				if ( capa.nombre != this.mapa.capaBase.nombre ){
+				 	listaCapasTmp.push(capa);	
+				}
+			}
+			this.capasTMP = listaCapasTmp;
+			this.listaCapas.dataProvider = 	this.capasTMP
+			if (this.mapa.capaBase != null){
+				var listaCapasTmp:Array = new Array();
+				var capa:WMSLayer;
+				
+				for each ( capa in this.capasTMP ){
+					//if ( capa.nombre != 'unigeo:estados' ){
+						
+					 	listaCapasTmp.push(capa);	
+					//}
+				}
+				
+				listaCapasTmp.push(this.mapa.capaBase);
+				this.capasTMP = listaCapasTmp;
+			}
+			
+		}	
+		*/
+		/*
+		public function activaCapaBase():void{
+			if (this.mapa.capaBase != null){
+				this.mapa.capaBase.selecciona(this.mapa.daQUERY());
+			}
+		}*/
+				
+		public function copiaReversa(arreglo:Array):Array{
+			var a:Array = new Array();
+			var i:int;
+			for ( i = this.capasTMP.length; 0 <= i ; i-- ){
+				a.push( this.capasTMP[i] );
+			}
+			return a;
+		}
+			
+		public function recargaMapa(event:MouseEvent):void{	
+			this.mapa.reiniciaMapa();
+		}
+		
+		public function daInfoMapa(event:MouseEvent):void {  
+				var capa:WMSLayer;     
+				var capas:Array = this.mapa.daCapasWMS();
+				for ( var i:int; i < capas.length ; i++ ){
+					capa = this.mapa.daCapasWMS()[i];
+	               if ( capa.seleccionada ){
+	            		i = capas.length;
+	            		this.mapa.regresaInfo(event.localX, event.localY,this); 	   
+	               }
+	   			}   			    
+        }
+		
+		
+		/* DRAG AND DROP DE MAPA*/
+		public function tomaMapa(event:DragEvent):void{
+			var dropTarget:Canvas = event.currentTarget as Canvas;
+			DragManager.acceptDragDrop(dropTarget);
+			var p:Punto = new Punto(event.localX,event.localY);
+			event.dragSource.addData(p, 'punto')
+		}
+		        
+		public function sueltaMapa(event:DragEvent):void{
+			
+			var p1:Punto = event.dragSource.dataForFormat('punto') as Punto;
+			//this.mapa.pan(p1, new Punto( event.localX, event.localY ));
+			this.mapa.pan(new Punto( event.localX, event.localY ),p1);
+		}
+				                
+		public function mueveMouse(event:MouseEvent):void{
+            var dragInitiator:Canvas=Canvas(event.currentTarget);
+            var ds:DragSource = new DragSource();
+            DragManager.doDrag(dragInitiator, ds, event, null, 0, 0,  0, false);
+			var a:Punto = this.mapa.daPunto( new Punto (event.localX, event.localY));
+			this.coordenadaX.text = a.getX().toString();
+			this.coordenadaY.text = a.getY().toString();
+			
+            //trace( a.tostring(","));
+		}
+
+		public function zoom(event:MouseEvent):void{
+			if (event.delta > 0){
+				this.mapa.zoom(1);
+			}else{
+				this.mapa.zoom(-1);
+			}
+			pintaEscala();
+		}
+		
+		
+		public function tmpZoom(event:ScrollEvent):void{
+			this.cMapa.focusEnabled =false;
+			this.cMapa.enabled = false;
+					this.cMapa.focusEnabled = true;
+		
+			trace(event.delta);
+		}
+
+		
+	 public function activaCapa(event:ListEvent):void{
+		var capa:WMSLayer = this.capasTMP[event.rowIndex];
+		this.arregloMetaSimbo[0] = capa;
+
+			switch(event.columnIndex){
+				case 0:
+					if ( !capa.seleccionada ){
+						//trace("soy cero");
+						capa.selecciona(this.mapa.daQUERY());
+						this.simb.dataProvider = this.arregloMetaSimbo;
+						this.metas.dataProvider = this.arregloMetaSimbo;
+					}else{
+						capa.seleccionada = false;
+					}
+					break;
+				case 1:
+					this.metas.dataProvider = this.arregloMetaSimbo;
+					break;
+				case 2:
+					this.simb.dataProvider = this.arregloMetaSimbo;
+					break;
+			
+		}
+	 }	
+	/* 
+	 public function clicCapaBase(e:MouseEvent):void{
+	 	var cb:CheckBox = e.target as CheckBox;
+	 	this.mapa.capaBase.seleccionada = cb.selected;
+	 }*/
+	 
+	 public function reOrdenaCapas(event:DragEvent):void{
+	 	this.imgMapas.dataProvider = copiaReversa(this.capasTMP);
+	 }
+	 
+	
+	public function descargaMetadato(event:Event):void{
+		var url:String = event.target.data;
+		//trace(url);
+	 	urlReq = new URLRequest(url);   
+		fileRef = new FileReference();
+		fileRef.addEventListener(Event.COMPLETE, doEvent);
+	 	function doEvent(en:Event):void{
+	 		var fr:FileReference = en.currentTarget as FileReference;   
+	 	}
+	 	
+	 	fileRef.download(urlReq);
+	 }
+		
+		
+		
+	public function descargaMapa(event:Event):void{
+		var ddtipo:String = this.DDtipo.value.toString();
+		var url:String = this.mapa.daUrlDD(ddtipo);
+		trace("decarga mapa de: "+url);
+		
+		if (url != "" ){
+		 	urlReq = new URLRequest(url);   
+			fileRef = new FileReference();
+			
+		 	var contenedor:Panel = this.cajaMapa;
+			var panelBaja:Panel = new Panel();
+			panelBaja.y = contenedor.width / 4;
+			panelBaja.x = 10;
+		
+			panelBaja.title = 'Ventana de descarga';
+			var etiqueta:Label = new Label();
+			etiqueta.text = 'Creando conexion con el servidor, la descarga puede tardar algunos minutos, por favor espere...';
+			panelBaja.addChild(etiqueta);
+
+			
+		
+			fileRef.addEventListener(ProgressEvent.PROGRESS, function(e:ProgressEvent):void{
+				contenedor.title = contenedor.title +' espera um momento en lo que se decarga el mapa...'
+				contenedor.addChild(panelBaja);
+				etiqueta.text = 'Espere un momento, decargado: '+ e.bytesLoaded;
+				trace("bajando ... "+  e.bytesLoaded);
+			});
+				
+			fileRef.addEventListener(Event.COMPLETE, termino);
+				
+			 function termino(en:Event):void{
+			 	contenedor.removeChild(panelBaja);
+			 	trace("termino");
+			 }
+			fileRef.addEventListener(IOErrorEvent.IO_ERROR, function():void{ 
+				Alert.show("No fue posible realizar la descarga del mapa debido a fallas de conexion con el servidor");	
+			});
+			
+			if ( ddtipo == "GML2" )
+				ddtipo = "XML";
+			
+			fileRef.download(urlReq,"UnigeoMapa-."+ddtipo);//+".zip");
+		
+		}else{
+	 		Alert.show("Seleccione una Capa");
+	 	}
+	}	
+	public function descargaMapaNO(event:Event):void{
+		//trace(this.DDtipo.value);
+		var ddtipo:String = this.DDtipo.value.toString();
+		var url:String = this.mapa.daUrlDD(ddtipo);
+	//	trace(url);
+		if ( url != "" ){
+		 	urlReq = new URLRequest(url);   
+			fileRef = new FileReference();
+		
+			
+			
+			//fileRef.addEventListener(
+			var contenedor:Panel = this.cajaMapa;
+			var panelBaja:Panel = new Panel();
+			panelBaja.y = contenedor.width / 4;
+			panelBaja.x = 10;
+			//panelBaja.width = contenedor.width / 4;
+			//panelBaja.height = contenedor.height / 4;	
+			panelBaja.title = 'Ventana de descarga';
+			var etiqueta:Label = new Label();
+			etiqueta.text = 'Creando conexion con el servidor, la descarga puede tardar algunos minutos, por favor espere...';
+			panelBaja.addChild(etiqueta);	
+			var activo:Boolean = false;
+			fileRef.addEventListener(Event.ACTIVATE, function(e:Event):void{
+				if (!activo){
+				activo = true;
+				//trace("activo");
+				CursorManager.setBusyCursor();
+			
+				//contenedor.title = contenedor.title +' espera um momento en lo que se decarga el mapa...'
+				contenedor.addChild(panelBaja);
+				}
+				});
+			fileRef.addEventListener(ProgressEvent.PROGRESS, function(e:ProgressEvent):void{
+				
+				var file:FileReference = FileReference(event.target);
+				etiqueta.text = 'decargado: '+ e.bytesLoaded+ 'bytes de '+ e.bytesTotal;
+						trace("bajando ... ");
+			});
+			
+			fileRef.addEventListener(Event.COMPLETE, termino);
+			
+		 	function termino(en:Event):void{
+		 		
+		 		//contenedor.removeChild(panelBaja);
+		 		var fr:FileReference = en.currentTarget as FileReference;
+		 		//CursorManager.removeBusyCursor();  
+		 		trace("termino");
+		 	}
+			fileRef.addEventListener(IOErrorEvent.IO_ERROR, function():void{
+				//contenedor.removeChild(panelBaja);
+		 		//CursorManager.removeBusyCursor();  
+				Alert.show("No fue posible realizar la descarga del mapa debido a fallas de conexion con el servidor");
+				
+			});
+		 	fileRef.download(urlReq,"UnigeoMapa-."+ddtipo);
+	 	}else{
+	 		Alert.show("Seleccione una Capa");
+	 	}
+	 		
+	}
+	
+
+	public function pintaEscala():void{
+		var anchoBBox:Number= this.mapa.anchoBBox();
+		var Npixelesgrados:Number = this.pixeles.width * anchoBBox / this.cMapa.width;
+		
+		this.escala.text = this.pixeles.width+ " pixeles = " + Npixelesgrados + " grados";
+		
+	}
+	
+		
+	]]>
+</mx:Script>
+	
+
+
+		<mx:Panel label="Capas" width="221" height="640" x="0" y="0"  title="Lista de Capas" id="panelCapas">
+			<!--mx:CheckBox label="Capa Base"  id="capaBase" click="clicCapaBase(event)" /-->
+		
+			<mx:DataGrid id="listaCapas" y="18" dragEnabled="true" dragMoveEnabled="true" dropEnabled="true"  width="100%" height="100%"
+			 itemClick="activaCapa(event);"  showHeaders="false"  dragComplete="reOrdenaCapas(event)" >
+			
+			<mx:columns>
+				<mx:DataGridColumn>
+					<mx:itemRenderer>
+						<mx:Component>
+							<mx:CheckBox label="{data.titulo}" selected="{data.seleccionada}" />
+						</mx:Component>
+					</mx:itemRenderer>    
+				</mx:DataGridColumn>
+                    
+				<mx:DataGridColumn width="15" > 
+					<mx:itemRenderer>
+						<mx:Component>
+							<mx:Label text="M" toolTip="De click para ver el Metadato" />
+						</mx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>  
+				<mx:DataGridColumn width="15">
+					<mx:itemRenderer>
+						<mx:Component>
+							<mx:Label text="S" toolTip="De click para ver la simbologia" />
+						</mx:Component>
+					</mx:itemRenderer>
+				</mx:DataGridColumn>                  
+			</mx:columns> 
+		</mx:DataGrid>	
+		</mx:Panel>
+	
+	<mx:Panel x="229" y="0" width="671" height="445" layout="absolute" title="Mapa" id='cajaMapa'>
+		<mx:Canvas width="651" height="405" id="cMapa"  x="0" y="0" borderStyle="solid" borderColor="#BFBEBE"
+			 verticalScrollPolicy="off" horizontalScrollPolicy="off"
+			dragEnter="tomaMapa(event);" 
+			dragDrop="sueltaMapa(event);" 
+			mouseMove="mueveMouse(event);" mouseWheel="zoom(event);"  
+			doubleClick="daInfoMapa(event);"
+			
+					 >
+			<mx:Repeater id="imgMapas">
+				<mx:Image x="0" y="0" source="{imgMapas.currentItem.urlMapa}" visible="{imgMapas.currentItem.seleccionada}"  />
+			</mx:Repeater>
+		</mx:Canvas>
+	</mx:Panel>
+		
+	<!--mx:Canvas id="meta" x="183" y="416" height="164" width="362" borderStyle="solid">
+		<mx:Label text="Metadatos " y="4"/>
+		<mx:Label id="labelMetadato" x="66" y="4"/>
+		
+		<mx:Text id="textMetadato" x="0" y="26"  width="341" textAlign="left"/>
+		<mx:LinkButton label="Descarga Metadato" id="descargaM"  x="226" y="0" 
+			fontFamily="Arial" fontSize="10" textDecoration="underline" visible="false"
+			 click="descargaMetadatoTMP(event)"/>
+	</mx:Canvas-->
+	
+	<mx:Panel  height="187" width="378"  x="229" y="453"  title="Metadatos" />
+	<mx:Canvas  height="146" width="359"  x="239" y="484"  >
+		<mx:Repeater id="metas">
+			<mx:Label text="{metas.currentItem.titulo}"/>
+			<mx:LinkButton label="Descarga Metadato"  x="226" y="0" 
+			fontFamily="Arial" fontSize="10" textDecoration="underline" visible="{metas.currentItem.hayMetadato}"
+			 click="descargaMetadato(event)"  data="{metas.currentItem.urlMetadato}"/>
+			<mx:Text  text="{metas.currentItem.metadato}" x="0" y="26"  width="341" textAlign="left">
+			</mx:Text>
+		</mx:Repeater>
+	</mx:Canvas>
+	
+	<mx:Button label="Reinicia Mapa" click="recargaMapa(event);" x="783" y="408" fillAlphas="[0.5, 0.5, 1.0, 1.0]"/>
+	
+	<mx:HBox x="592" y="35" width="294" backgroundColor="#E8E3E3" backgroundAlpha="0.5" cornerRadius="1" fontWeight="bold">
+		<mx:Label id="coordenadaX" text="x:"/><mx:Label id="coordenadaY" text="y:"/>
+	</mx:HBox>
+	<mx:Panel  height="187" width="285" x="615" y="453"  title="Simbología">
+		<mx:Repeater id="simb">
+			<mx:Label text="{simb.currentItem.titulo}"/>
+			<mx:Image source="{simb.currentItem.urlSimbologia}"  x="5" y="24" />
+		</mx:Repeater>
+		
+	</mx:Panel>
+	
+	<mx:VBox x="245" y="382" backgroundColor="#cccccc" backgroundAlpha="0.5">
+		
+		<mx:Label/>
+		<mx:HRule id="pixeles" strokeColor="#000101" width="200"/>
+		<mx:Label id="escala" width="295" fontWeight="bold"/>
+	</mx:VBox>
+	<mx:Button label="Descargar Mapa" click="descargaMapa(event);" fillAlphas="[0.9, 0.9, 0.9, 0.9]" x="774" y="453"/>
+	<mx:Label text="Descarga Mapa:" fontWeight="bold" x="583" y="408" color="#030303"/>
+	<mx:ComboBox id="DDtipo" fillAlphas="[0.5, 0.5, 1.0, 1.0]" width="90" x="687" y="408">
+		               <mx:dataProvider>
+		               <mx:Array>
+	
+		                  <mx:String>JPEG</mx:String>
+		                  <mx:String>GIF</mx:String>
+		                  <mx:String>PNG</mx:String>
+		                  <mx:String>SVG</mx:String>
+		                  <mx:String>PDF</mx:String>
+		                  <mx:String>KML</mx:String>
+		                  <mx:String>GML2</mx:String>
+		                  <!--mx:String>SHP-ZIP</mx:String>
+		                  <mx:String>JPEG</mx:String>
+		                  <mx:String>GIF</mx:String>
+		                  <mx:String>PNG</mx:String>
+		                  <mx:String>GEOTIF</mx:String>
+		                  <mx:String>SVG</mx:String>
+		                  <mx:String>PDF</mx:String>
+		                  <mx:String>KML</mx:String>
+		                  <mx:String>GEOSRSS</mx:String>
+		                  <mx:String>KML</mx:String>
+		                  <mx:String>GML2</mx:String-->
+		                  
+		                </mx:Array>
+		               </mx:dataProvider>
+	
+	</mx:ComboBox>
+	
+	
+	<mx:Canvas id="inicio" x="0" y="0" width="900" height="650" backgroundColor="#867777" backgroundAlpha="0.65">
+		<mx:Text id="mensaje" x="0" y="259" text="Estableciendo conexion con el servidor&#xa;Espere un momento..." fontSize="21" textAlign="center" color="#240707" width="100%"/>
+		
+	</mx:Canvas>
+
+	
+</mx:Application>
