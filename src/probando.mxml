@@ -19,6 +19,7 @@
 		import mx.events.ListEvent;
 		import flash.system.Security; 
 
+
 		Security.loadPolicyFile("http://132.248.26.13:8080/crossdomain.xml");
 		//Security.loadPolicyFile("http://132.248.26.15:8080/crossdomain.xml");
 		
