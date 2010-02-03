@@ -19,7 +19,7 @@
 		import mx.events.ListEvent;
 		import flash.system.Security; 
 
-
+		
 		Security.loadPolicyFile("http://132.248.26.13:8080/crossdomain.xml");
 		//Security.loadPolicyFile("http://132.248.26.15:8080/crossdomain.xml");
 		
@@ -29,6 +29,8 @@
 		public var arregloMetaSimbo:Array;
 		private var fileRef:FileReference;
 		private var urlReq:URLRequest; 
+		
+		private var numeroDescargas:int;
 
 		public function init():void{
 			//trace("chale no se que pex");
@@ -79,7 +81,7 @@
 				//activaCapaBase();
 				
 				//agregaCapaBase();
-				
+				this.numeroDescargas = 0;
 				
 			}catch(error:Error){
 				this.mensaje.text = error.message;
@@ -305,12 +307,17 @@
 			if ( ddtipo == "GML2" )
 				ddtipo = "XML";
 			
-			fileRef.download(urlReq,"UnigeoMapa-."+ddtipo);//+".zip");
-		
+			fileRef.download(urlReq,"UnigeoMapa-"+this.numeroDescargas+"."+ddtipo);//+".zip");
+			this.numeroDescargas++;
+			var fecha:Date = new Date();
+			
+			trace(fecha.getFullYear()+"-"+fecha.getMonth()+"-"+fecha.getDay()+"-"+fecha.getHours()+"-"+fecha.getSeconds());
 		}else{
 	 		Alert.show("Seleccione una Capa");
 	 	}
 	}	
+	
+	/*
 	public function descargaMapaNO(event:Event):void{
 		//trace(this.DDtipo.value);
 		var ddtipo:String = this.DDtipo.value.toString();
@@ -372,7 +379,7 @@
 	 	}
 	 		
 	}
-	
+	*/
 
 	public function pintaEscala():void{
 		var anchoBBox:Number= this.mapa.anchoBBox();
@@ -458,11 +465,7 @@
 		</mx:Repeater>
 	</mx:Canvas>
 	
-	<mx:Button label="Reinicia Mapa" click="recargaMapa(event);" x="783" y="408" fillAlphas="[0.5, 0.5, 1.0, 1.0]"/>
-	
-	<mx:HBox x="592" y="35" width="294" backgroundColor="#E8E3E3" backgroundAlpha="0.5" cornerRadius="1" fontWeight="bold">
-		<mx:Label id="coordenadaX" text="x:"/><mx:Label id="coordenadaY" text="y:"/>
-	</mx:HBox>
+	<mx:Button label="Reinicia Mapa" click="recargaMapa(event);" x="775" y="382" fillAlphas="[0.5, 0.5, 1.0, 1.0]"/>
 	<mx:Panel  height="187" width="285" x="615" y="453"  title="Simbología">
 		<mx:Repeater id="simb">
 			<mx:Label text="{simb.currentItem.titulo}"/>
@@ -477,11 +480,11 @@
 		<mx:HRule id="pixeles" strokeColor="#000101" width="200"/>
 		<mx:Label id="escala" width="295" fontWeight="bold"/>
 	</mx:VBox>
-	<mx:Button label="Descargar Mapa" click="descargaMapa(event);" fillAlphas="[0.9, 0.9, 0.9, 0.9]" x="774" y="453"/>
-	<mx:Label text="Descarga Mapa:" fontWeight="bold" x="583" y="408" color="#030303"/>
-	<mx:ComboBox id="DDtipo" fillAlphas="[0.5, 0.5, 1.0, 1.0]" width="90" x="687" y="408">
+	<mx:Button label="Descargar Mapa" click="descargaMapa(event);" fillAlphas="[0.9, 0.9, 0.9, 0.9]" x="762" y="408"/>
+	<mx:Label text="Tipo de Descarga:" fontWeight="bold" x="548" y="408" color="#030303"/>
+	<mx:ComboBox id="DDtipo" fillAlphas="[0.5, 0.5, 1.0, 1.0]" width="90" x="664" y="408">
 		               <mx:dataProvider>
-		               <mx:Array>
+		               <mx:Array> 
 	
 		                  <mx:String>JPEG</mx:String>
 		                  <mx:String>GIF</mx:String>
@@ -490,8 +493,8 @@
 		                  <mx:String>PDF</mx:String>
 		                  <mx:String>KML</mx:String>
 		                  <mx:String>GML2</mx:String>
-		                  <!--mx:String>SHP-ZIP</mx:String>
-		                  <mx:String>JPEG</mx:String>
+		                  <mx:String>SHAPE-ZIP</mx:String>
+		                  <!--mx:String>JPEG</mx:String>
 		                  <mx:String>GIF</mx:String>
 		                  <mx:String>PNG</mx:String>
 		                  <mx:String>GEOTIF</mx:String>
@@ -512,6 +515,9 @@
 		<mx:Text id="mensaje" x="0" y="259" text="Estableciendo conexion con el servidor&#xa;Espere un momento..." fontSize="21" textAlign="center" color="#240707" width="100%"/>
 		
 	</mx:Canvas>
+	<mx:HBox x="245" y="386" width="294" backgroundColor="#E8E3E3" backgroundAlpha="0.5" cornerRadius="1" fontWeight="bold">
+		<mx:Label id="coordenadaX" text="x:"/><mx:Label id="coordenadaY" text="y:"/>
+	</mx:HBox>
 
 	
 </mx:Application>
