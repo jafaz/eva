@@ -1,263 +1,121 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+
+<!-- 
+Smart developers always View Source. 
+
+This application was built using Adobe Flex, an open source framework
+for building rich Internet applications that get delivered via the
+Flash Player or to desktops via Adobe AIR. 
+
+Learn more about Flex at http://flex.org 
+// -->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!--  BEGIN Browser History required section -->
+<link rel="stylesheet" type="text/css" href="history/history.css" />
+<!--  END Browser History required section -->
+
+<title></title>
+<script src="AC_OETags.js" language="javascript"></script>
+
+<!--  BEGIN Browser History required section -->
+<script src="history/history.js" language="javascript"></script>
+<!--  END Browser History required section -->
+
+<style>
+body { margin: 0px; overflow:hidden }
+</style>
+<script language="JavaScript" type="text/javascript">
 <!--
-    Unidad de InfÃ³rmatica Geoespacial
-    Desgin modified an core of terrafirma1.0 by nodethirtythree design
-    http://www.nodethirtythree.com
-    
-  -->
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html;>charset=iso-8859-1" />
-    <meta name="keywords" content="" />
-    <meta name="description" content="" />
-    <title>Bienvenidos a la página principal de la Unidad de Informática Geoespacial (UNIGEO) - Servicios WMS en Open Source</title>
-    <meta name="title" content="Servicios WMS en Open Source" />
-    <meta name="author" content="Administrator" />
-    <meta name="description" content="" />
+// -----------------------------------------------------------------------------
+// Globals
+// Major version of Flash required
+var requiredMajorVersion = 9;
+// Minor version of Flash required
+var requiredMinorVersion = 0;
+// Minor version of Flash required
+var requiredRevision = 124;
+// -----------------------------------------------------------------------------
+// -->
+</script>
+</head>
 
-    <meta name="keywords" content="SIG, UNIGEO, UNIBIO, Servicios WMS,
-    Servicios , geografia, espacial, mapas, ESRI, WMS, GoogleMaps,
-    institudo de geografia, unam, UNAM, IG, Instituto de Geografía,
-    ArcGIS, wms, wfs, sistemas geograficos de informacion, sistemas,
-    geograficos, sig" />
-
-    <meta name="Generator" content="Joomla! - Copyright (C) 2005 - 2007 Open Source Matters. All rights reserved." />
-    <meta name="robots" content="index, follow" />
-    <script src="http://www.unigeo.igeograf.unam.mx/unigeo/includes/js/joomla.javascript.js" type="text/javascript"></script>
-    
-    <link rel="shortcut icon" href="http://www.unigeo.igeograf.unam.mx/unigeo/images/web.gif" />
-    <link rel="stylesheet" href="http://www.unigeo.igeograf.unam.mx/unigeo/templates/unigeo2008/css/template_css.css" type="text/css"/>
-    <link rel="shortcut icon" href="http://www.unigeo.igeograf.unam.mx/unigeo/images/favicon.ico" />
-    <link rel="stylesheet" type="text/css" href="history/history.css" />								 
-    <script src="AC_OETags.js" language="javascript"></script>
-    
-    <!--  BEGIN Browser History required section -->
-    <script src="history/history.js" language="javascript"></script>
-    <!--  END Browser History required section -->
-    <script language="JavaScript" type="text/javascript">
-      <!--
-	  // ------------
-			 // Globals
-			 // Major version of Flash required
-			 var requiredMajorVersion = 9;
-			 // Minor version of Flash required
-			 var requiredMinorVersion = 0;
-			 // Minor version of Flash required
-			 var requiredRevision = 28;
-			 // -----------------------------------------------------------------------------
-													// -->
-    </script>
-    
-    
-    
-    
-    <script type="text/javascript">
-      <!-- Scritp para abrir ventanas en popups-->
-      function MM_openBrWindow(theURL,winName,features) { //v2.0
-      window.open(theURL,winName,features);
-      }
-      
-    </script>
-    
-    <style type="text/css">
-      #map {
-      width: 720px;
-      height: 360px;
-      border: 1px solid black;
-      }
-      
-    </style>
-    <script src="lib/OpenLayers.js"></script>
-    <script src="unigeo.js"></script>
-    
-    <link href="unige.css" rel="stylesheet" type="text/css" /></head>
-  <body onload="init()">
-    
-    
-    <div id="contenedor">
-      <!--<div id="upbg"></div>-->
-      <div id="inner">
-	<div id="header">
-          <div id="logounigeo"></div>
-	  <h2>Unidad de Inform&aacute;tica Geoespacial</h2>
-	</div>
-        <div id="splash"></div>
-	<div id="menu">
-	  <ul>
-	    <li class="first"><a href="http://www.unigeo.igeograf.unam.mx/unigeo/index.php">Inicio</a></li>
-	    <li><a href="http://www.unigeo.igeograf.unam.mx/unigeo/index.php?option=com_content&task=view&id=16&Itemid=32">Mapas</a></li>
-	    <li><a href="http://www.unigeo.igeograf.unam.mx/unigeo/index.php?option=com_registration&task=register">Registro</a></li> 
-	    <li><a href="http://www.unigeo.igeograf.unam.mx/unigeo/index.php?option=com_login&task=login">Login</a></li>
-	    <li><a href="mailto:unigeo@igg.unam.mx">Contacto</a></li>
-	  </ul>
-	  <div id="date"></div>
-	</div>
-        <div id="cuerpo">
-	  <div id="principald">
-	    <div class="post">
-	      <div class="content">	
-		<table width="100%" class="contentpaneopen">
-		  <tr>
-		    <td class="contentheading" width="100%">Explorador y Visualizador de Acervos (EVA)</td>
-   		  </tr>
-		  <tr>
-		    <td >
-                      <p>EVA es un explorado y visualizador de acervos
-                      geoespaciales basados en una infraestructura
-                      IDE, el cual ademas de navegar los datos permite
-                      descargarlos en distintos formatos
-		      </p>
-                    </td>
-		  </tr>
-
-		  <!-- INICIO FLEX -->
-		  <tr>
-		    <td >   
-                      <center>  
-			<script language="JavaScript" type="text/javascript">
-	      <!--
-				      // Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
-	      var hasProductInstall = DetectFlashVer(6, 0, 65);
+<body scroll="no">
+<script language="JavaScript" type="text/javascript">
+<!--
+// Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
+var hasProductInstall = DetectFlashVer(6, 0, 65);
 
 // Version check based upon the values defined in globals
 var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
 
 if ( hasProductInstall && !hasRequestedVersion ) {
-    // DO NOT MODIFY THE FOLLOWING FOUR LINES
-    // Location visited after installation is complete if installation is required
-    var MMPlayerType = (isIE == true) ? "ActiveX" : "PlugIn";
-    var MMredirectURL = window.location;
+	// DO NOT MODIFY THE FOLLOWING FOUR LINES
+	// Location visited after installation is complete if installation is required
+	var MMPlayerType = (isIE == true) ? "ActiveX" : "PlugIn";
+	var MMredirectURL = window.location;
     document.title = document.title.slice(0, 47) + " - Flash Player Installation";
     var MMdoctitle = document.title;
-    
-    AC_FL_RunContent(
-		     "src", "playerProductInstall",
-		     "FlashVars", "MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",
-		     "width", "900",
-		     "height", "650",
-		     "align", "middle",
-		     "id", "main",
-		     "quality", "high",
-		     "bgcolor", "#ffffff",
-		     "name", "main",
-		     "allowScriptAccess","sameDomain",
-		     "type", "application/x-shockwave-flash",
-		     "pluginspage", "http://www.adobe.com/go/getflashplayer"
-		     );
+
+	AC_FL_RunContent(
+		"src", "playerProductInstall",
+		"FlashVars", "MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",
+		"width", "900",
+		"height", "650",
+		"align", "middle",
+		"id", "probando",
+		"quality", "high",
+		"bgcolor", "#ffffff",
+		"name", "probando",
+		"allowScriptAccess","sameDomain",
+		"type", "application/x-shockwave-flash",
+		"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
 } else if (hasRequestedVersion) {
-    // if we've detected an acceptable version
-    // embed the Flash Content SWF when all tests are passed
-    AC_FL_RunContent(
-		     "src", "main",
-		     "width", "900",
-		     "height", "650",
-		     "align", "middle",
-		     "id", "main",
-		     "quality", "high",
-		     "bgcolor", "#ffffff",
-		     "name", "main",
-		     "allowScriptAccess","sameDomain",
-		     "type", "application/x-shockwave-flash",
-		     "pluginspage", "http://www.adobe.com/go/getflashplayer"
-		     );
-} else {  // flash is too old or we can't detect the plugin
+	// if we've detected an acceptable version
+	// embed the Flash Content SWF when all tests are passed
+	AC_FL_RunContent(
+			"src", "probando",
+			"width", "900",
+			"height", "650",
+			"align", "middle",
+			"id", "probando",
+			"quality", "high",
+			"bgcolor", "#ffffff",
+			"name", "probando",
+			"allowScriptAccess","sameDomain",
+			"type", "application/x-shockwave-flash",
+			"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
+  } else {  // flash is too old or we can't detect the plugin
     var alternateContent = 'Alternate HTML content should be placed here. '
   	+ 'This content requires the Adobe Flash Player. '
    	+ '<a href=http://www.adobe.com/go/getflash/>Get Flash</a>';
     document.write(alternateContent);  // insert non-flash content
-}
+  }
 // -->
-			</script>
-			<noscript>
-			  <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
-				  id="main" width="900" height="650"
-				  codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
-			    <param name="movie" value="main.swf" />
-			    <param name="quality" value="high" />
-			    <param name="bgcolor" value="#ffffff" />
-			    <param name="allowScriptAccess" value="sameDomain" />
-			    <embed src="main.swf" quality="high" bgcolor="#ffffff"
-				   width="900" height="650" name="main" align="middle"
-				   play="true"
-				   loop="false"
-				   quality="high"
-				   allowScriptAccess="sameDomain"
-				   type="application/x-shockwave-flash"
-				   pluginspage="http://www.adobe.com/go/getflashplayer">
-			    </embed>
-			  </object>
-			</noscript>
-		      </center>
-		    </td>
-		  </tr>
-		  <!-- FIN FLEX -->
-
-		  <tr>
-		    <td >
-                      <h2>Instrucciones</h2>
-		      <br />
-		      <p>
-			<strong>Visualizar Capas</strong>:De click
-			sobre la lista de la derecha según desee
-			activar o desactivar la capa.<br/>
-			<strong>Trasladar mapa</strong>: De click
-			sobre una región del mapa y sin soltar
-			arrastre el cursor hacia donde desea trasladar
-			la imagen. <br/>
-			<strong>Alejar o acercar mapa</strong>:
-			Estando el cursor sobre el mapa, gire la rueda
-			de desplazamiento del mouse hacia arriba o
-			hacia abajo para acercar o alejar el mapa
-			respectivamente. <br/>
-                        <strong>Ver Metadato o Simbología de una
-                        Capa</strong>: Al dar click sobre la capa o la
-                        letra M o S de la lista de la derecha se podrá
-                        visualizar el metadato o simbología
-                        respectivamente.<br/>
-                        <strong>Descargar Metadato de una
-                        Capa</strong>: De clik sobre la liga que
-                        aparece en la caja de Metadatos. <br/>
-                        <strong>Descargar Mapa</strong>: Seleccione el
-                        formato en el que desee descargar el mapa y de
-                        click sobre el boton &quot;Descargar
-                        Mapa&quot;. <br/>
-                        <strong>Regresar Mapa a su posición
-                        origina</strong>: De click sobre el boton
-                        &quot;Reinicia Mapa&quot;.
-		      </p>
-		      <p>Para mayores informes sobre esta aplicación visite la siguiente página: 
-			<a href="http://132.248.26.13/trac/unigeo/wiki/EVA">http://132.248.26.13/trac/unigeo/wiki/EVA</a></p>
-		    </td>
-		  </tr>
-	        </table>
-		
-		<p></p>
-		<p class="article_seperator">&nbsp;</p>
-	      </div>
-	      
-	      <div class="footer"></div>
-	  </center>
-	  </div>
-        </div><!-- cuerpo-->
-	
-        <div id="pie">
-	  <div id=Derechos align="center">
-	    D.R. &copy; 2008 Universidad Nacional Autónoma de
-	    México <br> Instituto de Geografía, Circuito exterior S/N
-	    Ciudad Universitaria C.P. 04510. Del. Coyoacan, México,
-	    D.F.<br>  Se permite la reproducci&oacute;n total o
-	    parcial de la informaci&oacute;n contenida en este sitio,
-	    siempre y cuando se cite de forma completa la fuente,
-	    as&iacute; como su direcci&oacute;n
-	    electr&oacute;nica. <br> <a href="mailto:unigeo@igg.unam.mx">
-	    unigeo@igg.unam.mx </a>
-		</div>
-	      </div>
-	      
-	      
-	    </div>
-	  </div>
-	</body>
-	
-      </html>
-      <!-- 1203044726 -->
+</script>
+<noscript>
+  	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+			id="probando" width="900" height="650"
+			codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+			<param name="movie" value="probando.swf" />
+			<param name="quality" value="high" />
+			<param name="bgcolor" value="#ffffff" />
+			<param name="allowScriptAccess" value="sameDomain" />
+			<embed src="probando.swf" quality="high" bgcolor="#ffffff"
+				width="900" height="650" name="probando" align="middle"
+				play="true"
+				loop="false"
+				quality="high"
+				allowScriptAccess="sameDomain"
+				type="application/x-shockwave-flash"
+				pluginspage="http://www.adobe.com/go/getflashplayer">
+			</embed>
+	</object>
+</noscript>
+</body>
+</html>
