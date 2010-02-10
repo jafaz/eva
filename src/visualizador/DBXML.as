@@ -16,7 +16,7 @@ package visualizador{
 		public function DBXML(db:XML){
 			if ( db is XML ){
 				this.db = db;
-				_capas = xml2WMSLayer();
+				_capas = xml2WMSLayers();
 				_bbox = procesaBbox();
 				_urlServidor = db.Service.OnlineResource.attributes()[1];	
 			}else{
@@ -47,9 +47,12 @@ package visualizador{
 				throw new Error("La peticion del archivo de capas al servidor WMS es erronea");
 			}
 		}
-		
+		/*
 		private function xml2WMSLayer():Array{
 			var xmlLayers:XMLList = db.Capability.Layer.Layer.(@queryable == "1");
+			
+			
+			
 			
 			if ( xmlLayers.length() > 0 ){			
 				var capas:Array =   new Array(xmlLayers.length());
@@ -60,7 +63,7 @@ package visualizador{
 					//if ( layer.child("SRS") == "EPSG:4326"){
 					//trace( layer.child("SRS").toString());
 					
-					capas.push(new WMSLayer(layer));
+					//capas.push(new WMSLayer(layer));
 					capas[i] = new WMSLayer(layer);
 					i++;
 					//}
@@ -71,7 +74,46 @@ package visualizador{
 				throw new Error("La peticion del archivo de capas al servidor WMS es erroneaddd");
 			}
 		}
+		*/
 		
+		private function xml2WMSLayers():Array{
+			var xmlLayers:XMLList = db.Capability.Layer.Layer.(@queryable == "1");
+			
+			if ( xmlLayers.length() > 0 ){		
+				
+				var capasTML:Array = new Array();
+					
+				var capas:Array =   new Array(xmlLayers.length());
+				var wmsLayer:WMSLayer;
+				var i:int = 0;
+				var layer:XML;
+				for each ( layer in xmlLayers ){
+					
+					if ( layer.child("SRS") == "EPSG:4326"){
+						capasTML.push(new WMSLayer(layer));
+						//capasTML.push( new WMSLayer(layer) );
+						trace( layer.child("SRS").toString());
+					}
+			
+					
+					
+				}
+				
+				
+				capas = new Array(capasTML.length);
+				
+				var capita:WMSLayer;	
+					
+				for each ( capita  in capasTML ){
+					capas[i] = capita;
+					i++;
+				}
+				
+				return capas;
+			}else{
+				throw new Error("La peticion del archivo de capas al servidor WMS es erroneaddd");
+			}
+		}
 
 		
 		public function get capas():Array{

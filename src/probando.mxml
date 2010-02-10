@@ -268,10 +268,19 @@
 		
 	public function descargaMapa(event:Event):void{
 		var ddtipo:String = this.DDtipo.value.toString();
-		var url:String = this.mapa.daUrlDD(ddtipo);
+		var url:String = "";
+		if ( ddtipo == "DOCX" ){
+			url = this.mapa.daUrlDocx(ddtipo);
+		}else{
+			url = this.mapa.daUrlDD(ddtipo);
+		}
+		
+		//var url:
 		trace("decarga mapa de: "+url);
 		
 		if (url != "" ){
+			
+			
 		 	urlReq = new URLRequest(url);   
 			fileRef = new FileReference();
 			
@@ -493,6 +502,7 @@
 		                  <mx:String>PDF</mx:String>
 		                  <mx:String>KML</mx:String>
 		                  <mx:String>GML2</mx:String>
+		                  <mx:String>DOCX</mx:String>
 		                  <mx:String>SHAPE-ZIP</mx:String>
 		                  <!--mx:String>JPEG</mx:String>
 		                  <mx:String>GIF</mx:String>

@@ -104,6 +104,33 @@ package visualizador{
 		public function daQUERY():WMSQuery{
 			return this.generaURLWMS;
 		}
+
+
+		public function daUrlDocx(tipo:String):String{	
+			var tmp:String = "";
+			var hayCapas:Boolean = false;
+				for each ( capa in this.layers ){
+					var capa:WMSLayer = capa;
+					if ( capa.seleccionada ){
+						//if ( this._capaBase == null || capa.nombre != this._capaBase.nombre ){
+							hayCapas = true;
+							tmp = tmp + capa.nombre + ",";
+						//}
+					}
+				}
+			tmp = tmp.substr(0,tmp.length-1);
+				//trace(tmp);
+				
+			/*tmp = "http://132.248.26.13:8080/geos/wfs?request=GetFeature&version=1.1.0&typeName="+tmp+"&BBOX="+
+				this.bbox.imprimeOrden(",")+"&outputFormat=SHAPE-ZIP";*/
+				
+			tmp = "http://132.248.26.13:38921/mapDocx/MP?bbox=" +this.bbox.imprimeOrden(",") +"&" + 
+					"layers="+tmp	
+				//trace(tmp);
+			if (!hayCapas)
+				tmp = "";
+			return tmp;	
+		}
 		
 		public function daUrlDD(tipo:String):String{	
 			var tmp:String = "";
