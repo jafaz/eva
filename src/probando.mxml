@@ -522,7 +522,7 @@
 	
 	
 	<mx:Canvas id="inicio" x="0" y="0" width="900" height="650" backgroundColor="#867777" backgroundAlpha="0.65">
-		<mx:Text id="mensaje" x="0" y="259" text="Estableciendo conexion con el servidor&#xa;Espere un momento..." fontSize="21" textAlign="center" color="#240707" width="100%"/>
+		<mx:Text id="mensaje" x="0" y="279" text="Estableciendo conexion con el servidor&#xa;Espere un momento..." fontSize="21" textAlign="center" color="#240707" width="100%"/>
 		
 	</mx:Canvas>
 	<mx:HBox x="245" y="386" width="294" backgroundColor="#E8E3E3" backgroundAlpha="0.5" cornerRadius="1" fontWeight="bold">
